@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="./css/styles.css">
+<script src="./js/function.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Tic-Tac-Toe</h1>
+    <div id="Turno">Turno: X</div>
+
+    <div id="timer">Tiempo: 00:00</div>
+
+    <div class="grid">
+        <input type="button" onclick="turno(this)" class="top left">
+        <input type="button" onclick="turno(this)" class="top">
+        <input type="button" onclick="turno(this)" class="top right">
+        <input type="button" onclick="turno(this)" class="left">
+        <input type="button" onclick="turno(this)" class="center">
+        <input type="button" onclick="turno(this)" class="right">
+        <input type="button" onclick="turno(this)" class="bottom left">
+        <input type="button" onclick="turno(this)" class="bottom">
+        <input type="button" onclick="turno(this)" class="bottom right">
+    </div>
+
+    <hr>
+
+    <div>
+       <button id="restart" onclick="reiniciar()">Reiniciar</button> 
+    </div>
+    
+    <hr>
+
+    <div>
+        <label for="colorXID">Color de celda de X:  </label>
+        <input type="color" id="colorXID" value="#d18b47" onchange="cambiarColores()">
+
+    
+        <label for="colorOID">Color de celda de O: </label>
+        <input type="color" id="colorOID" value="#AD2E24" onchange="cambiarColores()">
+    
+        <label for="colorGanadorID">Color de linea ganadora:</label>
+        <input type="color" id="colorGanadorID" value="#861F18" onchange="cambiarColores()">
+    </div>
+
+    <div>
+        <label for="temaX">Tema para X:</label>
+        <select id="temaX" onchange="cambiarTema()">
+            <option value="default">Default</option>
+            <option value="binario">Binario</option>
+            <option value="perrito">Perrito</option>
+        </select>
+    
+        <label for="temaO">Tema para O:</label>
+        <select id="temaO" onchange="cambiarTema()">
+            <option value="default">Default</option>
+            <option value="binario">Binario</option>
+            <option value="gatito">Gatito</option>
+        </select>
+    </div>
+
+</body>
+</html>
