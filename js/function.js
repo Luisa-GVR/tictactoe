@@ -4,14 +4,29 @@ var timerEmpezado = false;
 var timerIntervalo;
 var segundos = 0;
 var minutos = 0;
+var lineaGanadora;
+
+
+let tipo = null; 
+let posiciones = [];
 
 let imgX = "url(./img/x.png)"; 
 let imgO = "url(./img/o.png)";
 
+window.addEventListener('resize', function() {
+
+    if (lineaGanadora != null) {
+        lineaGanadora.remove(); // Eliminar la línea ganadora del DOM
+        lineaGanadora = null;
+
+        dibujarLineaGanadora(posiciones,tipo);
+    }
+});
 
 // Timer y turno
 
 function turno(boton) {
+
 
     if (!timerEmpezado) {
         startTimer(); 
@@ -86,12 +101,15 @@ function reiniciar() {
     segundos = 0;
     minutos = 0;
     timerEmpezado = false;
+    tipo = null; 
+    posiciones = [];
     detenerTimer();
 }
 
 
 
 function verificar() {
+
 
     cambiarColores();
 
@@ -103,36 +121,49 @@ function verificar() {
      // Horizontales
      if (botones[0].value == botones[1].value && botones[1].value == botones[2].value && botones[0].value != "") {
         mostrarGanador(botones[0].value);
-        dibujarLineaGanadora([0, 1, 2], "horizontal");
+        tipo = "horizontal";
+        posiciones = [0, 1, 2];
     } else if (botones[3].value == botones[4].value && botones[4].value == botones[5].value && botones[3].value != "") {
         mostrarGanador(botones[3].value);
-        dibujarLineaGanadora([3, 4, 5], "horizontal");
+        tipo = "horizontal";
+        posiciones = [3, 4, 5];
     } else if (botones[6].value == botones[7].value && botones[7].value == botones[8].value && botones[6].value != "") {
         mostrarGanador(botones[6].value);
-        dibujarLineaGanadora([6, 7, 8], "horizontal");
+        tipo = "horizontal";
+        posiciones = [6, 7, 8];
     }
     // Verticales
     else if (botones[0].value == botones[3].value && botones[3].value == botones[6].value && botones[0].value != "") {
         mostrarGanador(botones[0].value);
-        dibujarLineaGanadora([0, 3, 6], "vertical");
+        tipo = "vertical";
+        posiciones = [0, 3, 6];
     } else if (botones[1].value == botones[4].value && botones[4].value == botones[7].value && botones[1].value != "") {
         mostrarGanador(botones[1].value);
-        dibujarLineaGanadora([1, 4, 7], "vertical");
+        tipo = "vertical";
+        posiciones = [1, 4, 7];
     } else if (botones[2].value == botones[5].value && botones[5].value == botones[8].value && botones[2].value != "") {
         mostrarGanador(botones[2].value);
-        dibujarLineaGanadora([2, 5, 8], "vertical");
+        tipo = "vertical";
+        posiciones = [2, 5, 8];
     }
     // Diagonales
     else if (botones[0].value == botones[4].value && botones[4].value == botones[8].value && botones[0].value != "") {
         mostrarGanador(botones[0].value);
-        dibujarLineaGanadora([0, 4, 8], "diagonal");
+        tipo = "diagonal";
+        posiciones = [0, 4, 8];
     } else if (botones[2].value == botones[4].value && botones[4].value == botones[6].value && botones[2].value != "") {
         mostrarGanador(botones[2].value);
-        dibujarLineaGanadora([2, 4, 6], "diagonal");
+        tipo = "diagonal";
+        posiciones = [2, 4, 6];
     }
+
+    if (tipo && posiciones.length > 0) {
+        dibujarLineaGanadora(posiciones, tipo);
+    }
+
 }
 
-var lineaGanadora;
+
 
 function dibujarLineaGanadora(posiciones, tipo) {
     var linea = document.createElement("div");
@@ -141,25 +172,34 @@ function dibujarLineaGanadora(posiciones, tipo) {
     var botones = document.querySelectorAll("input[type='button']");
     var contenedor = botones[0].closest('.grid'); 
 
+    // Obtenemos las coordenadas de los botones
     var coord1 = getCoordinates(botones[posiciones[0]]);
     var coord2 = getCoordinates(botones[posiciones[1]]);
+    var coord3 = getCoordinates(botones[posiciones[2]]);
+
     
     linea.style.position = "absolute";
     linea.style.zIndex = "10"; 
     linea.style.backgroundColor = colorGanador; 
-    
+
     if (tipo === "horizontal") {
+        // Recalcular las coordenadas en función del zoom y la escala
+        const scaleX = contenedor.getBoundingClientRect().width / contenedor.offsetWidth;
+        
+        // Ajustar la posición horizontal de la línea, incluyendo el desplazamiento
         linea.style.top = `${coord1.top + contenedor.scrollTop + coord1.height / 2}px`;
-        linea.style.left = `${coord1.left + contenedor.scrollLeft}px`;
-        linea.style.width = `${coord1.width * 3}px`; 
+        linea.style.left = `${coord1.left + contenedor.scrollLeft}px`; // Considerar el desplazamiento en el eje X
+
+        // Ajustar el ancho de la línea basado en las posiciones de los botones
+        linea.style.width = `${(coord3.left + coord3.width) - coord1.left}px`;  
         linea.style.height = "3px"; 
     } else if (tipo === "vertical") {
+
         linea.style.left = `${coord1.left + contenedor.scrollLeft + coord1.width / 2}px`;
         linea.style.top = `${coord1.top + contenedor.scrollTop}px`;
         linea.style.height = `${coord1.height * 3}px`; 
         linea.style.width = "3px"; 
     } else if (tipo === "diagonal") {
-        var coord3 = getCoordinates(botones[posiciones[2]]);
         
         var center1 = {
             x: coord1.left + coord1.width / 2,
@@ -177,7 +217,7 @@ function dibujarLineaGanadora(posiciones, tipo) {
         var dx = center2.x - center1.x;
         var dy = center2.y - center1.y;
         var length = Math.sqrt(dx * dx + dy * dy); 
-        var angle = Math.atan2(dy, dx) * (180 / Math.PI); //angulo
+        var angle = Math.atan2(dy, dx) * (180 / Math.PI); // Ángulo
 
         linea.style.position = 'absolute';
         linea.style.width = length + 'px';
@@ -187,7 +227,6 @@ function dibujarLineaGanadora(posiciones, tipo) {
         linea.style.left = center1.x + 'px';
         linea.style.transformOrigin = '0 0';
         linea.style.transform = 'rotate(' + angle + 'deg)';
-
     }
 
     lineaGanadora = linea;
