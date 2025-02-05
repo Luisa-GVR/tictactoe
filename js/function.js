@@ -90,8 +90,7 @@ function reiniciar() {
         botones[i].style.backgroundImage = "";
     }
 
-    lineaGanadora.remove(); // Eliminar la línea ganadora del DOM
-    lineaGanadora = null;
+    
 
     
     siguiente = false;
@@ -104,6 +103,9 @@ function reiniciar() {
     tipo = null; 
     posiciones = [];
     detenerTimer();
+
+    lineaGanadora.remove(); // Eliminar la línea ganadora del DOM
+    lineaGanadora = null;
 }
 
 
